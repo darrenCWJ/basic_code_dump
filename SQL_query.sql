@@ -2,6 +2,12 @@
 SELECT Vaccine Data, Month, Type, SUM(Vaccine Data) OVER (ORDER BY TYPE) as total_sum
 From VaccineDataset
 
+-- Aggregation (showing the average dose amount for each type)
+SELECT Vaccine Data,dose_amount,location, ROUND(AVG(dose_amount) OVER(PARTITION BY Type)) as avg_dose_amount
+FROM VaccineDataset
+ORDER BY dose_amount DESC
+
+
 -- Common table Expression
 WITH subset as (
 SELECT id as id
@@ -60,7 +66,22 @@ FROM DATA
 -- STDDEV_POP population standard deviation
 
 
+-- Correlated Subqueries
+SELECT location, vacc_type, dose_amount, round(SELECT AVG(dose_amount)
+									FROM vaccine_data
+									WHERE v1.vacc_type = v2.vacc_type) as avg_dose_amount
+FROM vaccine_data v1
+WHERE dose_amount < (SELECT 
+					AVG(dose_amount)
+					FROM vaccine_date v2
+					WHERE v1.vacc_type = v2.vacc_type
+					GROUP BY vacc_type)
+ORDER BY dose_amount
 
-
+-- Case when clause (GROUPING into category)
+SELECT location,dose_amount,(SELECT ROUND(AVG(dose_amount)) FROM vaccine_data) as avg_dose_amount,
+(CASE WHEN dose_amount > (SELECT AVG(dose_amount) FROM vaccine_data) THEN 'higher_than_average'
+ELSE 'lower_than_average' END) as Salary_Case
+FROM vaccine_data
 
 
