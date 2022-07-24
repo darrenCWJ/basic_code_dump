@@ -1,0 +1,19 @@
+/*
+Enter your query here.
+Please append a semicolon ";" at the end of the query and enter your query in a single line to avoid error.
+SELECT N,P, 
+CASE
+    WHEN P IS NULL THEN 'ROOT'
+    WHEN N NOT IN (SELECT DISTINCT P FROM BST WHERE P IS NOT NULL) THEN 'LEAF'
+    ELSE 'INNER'
+    END AS TYPE_OF_NODE
+FROM BST;
+*/
+SELECT N, 
+CASE
+    WHEN P IS NULL THEN 'Root'
+    WHEN N IN (SELECT DISTINCT P FROM BST WHERE P IS NOT NULL) THEN 'Inner'
+    ELSE 'Leaf'
+    END AS TYPE_OF_NODE
+FROM BST
+ORDER BY N;
